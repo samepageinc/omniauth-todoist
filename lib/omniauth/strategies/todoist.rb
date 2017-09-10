@@ -5,36 +5,39 @@ require 'multi_json'
 module OmniAuth
   module Strategies
     class Todoist < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = 'data:read'
-
-      # Give your strategy a name.
       option :name, "todoist"
 
-      # This is where you pass the options you would pass when
-      # initializing your consumer from the OAuth gem.
       option :client_options, {
-        :site => "https://todoist.com",
-        :authorize_url => "/oauth/authorize",
-        :token_url => "/oauth/access_token"
+        site:          "https://todoist.com",
+        authorize_url: "/oauth/authorize",
+        token_url:     "/oauth/access_token"
       }
+
+      option :authorize_options, [:scope]
 
       # These are called after authentication has succeeded. If
       # possible, you should try to set the UID without making
       # additional calls (if the user id is returned with the token
       # or as a URI parameter). This may not be possible with all
       # providers.
-      uid{ raw_info['id'] }
+      uid{ raw_info['id'].to_s }
 
       info do
-        { :email => raw_info["email"] }
+        first_name, last_name = raw_info['full_name'].to_s.split(/\s+/, 2)
+
+        prune!(
+          name:       raw_info['full_name'],
+          first_name: first_name,
+          last_name:  last_name,
+          email:      raw_info['email'],
+          phone:      raw_info['mobile_number'],
+          image:      raw_info['avatar_big'],
+          time_zone:  raw_info['tz_info']['timezone']
+        )
       end
 
-      def request_phase
-        super
-      end
-
-      def callback_phase
-          super
+      extra do
+        prune!(raw_info: raw_info)
       end
 
       # Bugfix for regression introduced after omniauth-oauth2 v1.3.1
@@ -44,25 +47,29 @@ module OmniAuth
       end
 
       def raw_info
-        unless @raw_info
-          user_info = access_token.post("/API/v7/sync", { 
-            body: { 
-              token: access_token.token, 
-              sync_token: "*", 
-              resource_types: '["user"]' }, 
+        @raw_info ||= begin
+          params = {
             headers: {
-              "Content-Type"=>"application/x-www-form-urlencoded" }
-          }).parsed
-          if user_info["user"]  
-            @raw_info = user_info["user"]
-          else
-            @raw_info = {}
-          end
+              "Content-Type" => "application/x-www-form-urlencoded"
+            },
+            body: {
+              token: access_token.token,
+              sync_token: "*",
+              resource_types: '["user"]'
+            }
+          }
+          access_token.post("/API/v7/sync", params).parsed.fetch('user', {})
         end
-        @raw_info
+      end
+
+    private
+    
+      def prune!(hash)
+        hash.delete_if do |_, value|
+          prune!(value) if value.is_a?(Hash)
+          value.nil? || (value.respond_to?(:empty?) && value.empty?)
+        end
       end
     end
   end
 end
-
-
