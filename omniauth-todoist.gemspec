@@ -6,8 +6,8 @@ require 'omniauth/todoist/version'
 Gem::Specification.new do |s|
   s.name          = "omniauth-todoist"
   s.version       = Omniauth::Todoist::VERSION
-  s.authors       = ["Bethany Soule"]
-  s.email         = ["bsoule@beeminder.com"]
+  s.authors       = ["Bethany Soule", "Joel Van Horn"]
+  s.email         = ["bsoule@beeminder.com", "joel@joelvanhorn.com"]
 
   s.summary       = %q{OmniAuth strategy for Todoist}
   s.description   = %q{OmniAuth strategy for Todoist}
