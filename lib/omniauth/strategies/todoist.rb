@@ -23,16 +23,12 @@ module OmniAuth
       uid{ raw_info['id'].to_s }
 
       info do
-        first_name, last_name = raw_info['full_name'].to_s.split(/\s+/, 2)
-
         prune!(
-          name:       raw_info['full_name'],
-          first_name: first_name,
-          last_name:  last_name,
-          email:      raw_info['email'],
-          phone:      raw_info['mobile_number'],
-          image:      raw_info['avatar_big'],
-          time_zone:  raw_info['tz_info']['timezone']
+          name:      raw_info['full_name'],
+          email:     raw_info['email'],
+          phone:     raw_info['mobile_number'],
+          image:     raw_info['avatar_big'],
+          time_zone: raw_info['tz_info']['timezone']
         )
       end
 
@@ -63,7 +59,7 @@ module OmniAuth
       end
 
     private
-    
+
       def prune!(hash)
         hash.delete_if do |_, value|
           prune!(value) if value.is_a?(Hash)
