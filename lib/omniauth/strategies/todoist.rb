@@ -45,7 +45,7 @@ module OmniAuth
 
       def raw_info
         unless @raw_info
-          user_info = access_token.post("/API/v7/sync", { 
+          user_info = access_token.post("https://api.todoist.com/sync/v8/sync", {
             body: { 
               token: access_token.token, 
               sync_token: "*", 
