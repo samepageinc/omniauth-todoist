@@ -26,7 +26,6 @@ module OmniAuth
         prune!(
           name:      raw_info['full_name'],
           email:     raw_info['email'],
-          phone:     raw_info['mobile_number'],
           image:     raw_info['avatar_big'],
           time_zone: raw_info['tz_info']['timezone']
         )
