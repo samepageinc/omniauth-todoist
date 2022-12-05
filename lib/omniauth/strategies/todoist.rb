@@ -26,7 +26,6 @@ module OmniAuth
         prune!(
           name:      raw_info['full_name'],
           email:     raw_info['email'],
-          phone:     raw_info['mobile_number'],
           image:     raw_info['avatar_big'],
           time_zone: raw_info['tz_info']['timezone']
         )
@@ -54,7 +53,7 @@ module OmniAuth
               resource_types: '["user"]'
             }
           }
-          access_token.post("https://api.todoist.com/sync/v8/sync", params).parsed.fetch('user', {})
+          access_token.post("https://api.todoist.com/sync/v9/sync", params).parsed.fetch('user', {})
         end
       end
 
