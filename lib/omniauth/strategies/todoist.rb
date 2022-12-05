@@ -54,7 +54,7 @@ module OmniAuth
               resource_types: '["user"]'
             }
           }
-          access_token.post("https://api.todoist.com/sync/v8/sync", params).parsed.fetch('user', {})
+          access_token.post("https://api.todoist.com/sync/v9/sync", params).parsed.fetch('user', {})
         end
       end
 
