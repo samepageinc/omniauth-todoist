@@ -10,7 +10,9 @@ module OmniAuth
       option :client_options, {
         site:          "https://todoist.com",
         authorize_url: "/oauth/authorize",
-        token_url:     "/oauth/access_token"
+        token_url:     "/oauth/access_token",
+        # https://github.com/beeminder/omniauth-todoist/issues/5
+        auth_scheme:   :request_body
       }
 
       option :authorize_options, [:scope]
